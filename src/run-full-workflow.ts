@@ -8,6 +8,14 @@ import { ProductSpecAgent } from "../agents/product-spec-agent/product-spec-agen
 
 import { SddAgent } from "../agents/sdd-agent/sdd-agent";
 
+import { ContextDocGenerator } from "./generators/context-doc-generator";
+
+import { DiscoveryDocGenerator } from "./generators/discovery-doc-generator";
+
+import { PrdDocGenerator } from "./generators/prd-doc-generator";
+
+import { SddDocGenerator } from "./generators/sdd-doc-generator";
+
 async function main() {
   try {
     const provider =
@@ -25,12 +33,19 @@ async function main() {
     const sddAgent =
       new SddAgent(provider);
 
-    console.log(
-      "\n=== GENERATING CONTEXT ===\n"
-    );
+    const contextDocGenerator =
+      new ContextDocGenerator();
 
-    const context =
-      await contextAgent.execute(`
+    const discoveryDocGenerator =
+      new DiscoveryDocGenerator();
+
+    const prdDocGenerator =
+      new PrdDocGenerator();
+
+    const sddDocGenerator =
+      new SddDocGenerator();
+
+    const rawInput = `
 Estamos construindo uma funcionalidade de agendamento automatizado via WhatsApp para um consultório médico.
 
 A plataforma deve:
@@ -204,7 +219,20 @@ respostas rápidas
 autonomia total do paciente
 possibilidade de intervenção humana quando necessário
 experiência semelhante a conversar com uma recepcionista real
-`);
+`;
+
+    console.log(
+      "\n=== GENERATING CONTEXT ===\n"
+    );
+
+    const context =
+      await contextAgent.execute(
+        rawInput
+      );
+
+    contextDocGenerator.generate(
+      context
+    );
 
     console.log(
       "\n=== GENERATING DISCOVERY ===\n"
@@ -215,6 +243,10 @@ experiência semelhante a conversar com uma recepcionista real
         context
       );
 
+    discoveryDocGenerator.generate(
+      discovery
+    );
+
     console.log(
       "\n=== GENERATING PRODUCT SPEC ===\n"
     );
@@ -224,6 +256,10 @@ experiência semelhante a conversar com uma recepcionista real
         context,
         discovery,
       });
+
+    prdDocGenerator.generate(
+      productSpec
+    );
 
     console.log(
       "\n=== GENERATING SDD ===\n"
@@ -236,16 +272,12 @@ experiência semelhante a conversar com uma recepcionista real
         productSpec,
       });
 
-    console.log(
-      "\n=== SDD OUTPUT ===\n"
+    sddDocGenerator.generate(
+      sdd
     );
 
     console.log(
-      JSON.stringify(
-        sdd,
-        null,
-        2
-      )
+      "\n=== WORKFLOW COMPLETED ===\n"
     );
   } catch (error) {
     console.error(
