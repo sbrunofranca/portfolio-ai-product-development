@@ -1,19 +1,31 @@
 import { z } from "zod";
 
-export const SDDSchema = z.object({
-  architectureOverview: z.string(),
+export const SddSchema = z.object({
+  architectureOverview:
+    z.string(),
 
-  services: z.array(z.string()),
+  systemComponents:
+    z.array(z.string()),
 
-  APIs: z.array(z.string()),
+  apiEndpoints:
+    z.array(z.string()),
 
-  dataModel: z.array(z.string()),
+  databaseEntities:
+    z.array(z.string()),
 
-  risks: z.array(z.string()),
+  integrations:
+    z.array(z.string()),
 
-  tradeoffs: z.array(z.string()),
+  technicalRisks:
+    z.array(z.string()),
 
-  observability: z.array(z.string()),
+  scalabilityConcerns:
+    z.array(z.string()),
+
+  observabilityRequirements:
+    z.array(z.string()),
 });
 
-export type SDDOutput = z.infer<typeof SDDSchema>;
+export type SddOutput = z.infer<
+  typeof SddSchema
+>;
